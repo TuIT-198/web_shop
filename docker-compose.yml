@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ecom_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-postgres_password_123}
+      POSTGRES_DB: ${DB_NAME:-ecommerce_db}
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./database/webDb.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ecom-network
+
+  backend:
+    build: ./backend-ecomerce
+    container_name: ecom_backend
+    restart: always
+    ports:
+      - "5157:5157"
+    environment:
+      PORT: 5157
+      DATABASE_URL: postgres://${DB_USER:-postgres}:${DB_PASS:-postgres_password_123}@db:5432/${DB_NAME:-ecommerce_db}
+      ACCESS_TOKEN: ${JWT_ACCESS_TOKEN:-jwt_secret_access_key_default_381283}
+      REFRESH_TOKEN: ${JWT_REFRESH_TOKEN:-jwt_secret_refresh_key_default_892398}
+      MAIL_ACCOUNT: ${MAIL_ACCOUNT:-email_cua_ban@gmail.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-mat_khau_ung_dung_cua_email}
+      TZ: ${TZ:-Asia/Ho_Chi_Minh}
+    depends_on:
+      - db
+    networks:
+      - ecom-network
+
+  frontend:
+    build: ./Ecommerce
+    container_name: ecom_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - ecom-network
+
+volumes:
+  pg-data:
+
+networks:
+  ecom-network:
+    driver: bridge
