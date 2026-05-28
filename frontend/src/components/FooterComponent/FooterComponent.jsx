@@ -100,7 +100,7 @@ const FooterComponent = () => {
                 fontSize: '24px', fontWeight: 800, color: '#fff',
                 marginBottom: '14px', letterSpacing: '-0.5px'
               }}>
-                <span style={{ color: '#9255FD' }}>Computer</span>Shop
+                <span style={{ color: '#9255FD' }}>My</span>Shop
               </div>
               <p style={{ fontSize: '13px', lineHeight: '1.8', color: '#aaa', marginBottom: '20px' }}>
                 Chuyên cung cấp linh kiện máy tính chính hãng, bảo hành uy tín. Mang đến trải nghiệm mua sắm tốt nhất cho bạn.
@@ -113,7 +113,7 @@ const FooterComponent = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#bbb' }}>
                   <MailOutlined style={{ color: '#9255FD' }} />
-                  <span>support@computershop.vn</span>
+                  <span>support@myshop.vn</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#bbb' }}>
                   <EnvironmentOutlined style={{ color: '#9255FD' }} />
@@ -177,7 +177,7 @@ const FooterComponent = () => {
             display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px'
           }}>
             <span style={{ fontSize: '12px', color: '#666' }}>
-              © 2024 ComputerShop. All rights reserved.
+              © 2024 MyShop. All rights reserved.
             </span>
             <span style={{ fontSize: '12px', color: '#666' }}>
               Giấy phép kinh doanh số: 123456789-001

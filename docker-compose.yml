@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
-    container_name: ecom_postgres
+    container_name: shopDb
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
@@ -19,8 +19,8 @@ services:
       - ecom-network
 
   backend:
-    build: ./backend-ecomerce
-    container_name: ecom_backend
+    build: ./backend
+    container_name: backend
     restart: always
     ports:
       - "5157:5157"
@@ -38,8 +38,8 @@ services:
       - ecom-network
 
   frontend:
-    build: ./Ecommerce
-    container_name: ecom_frontend
+    build: ./frontend
+    container_name: frontend
     restart: always
     ports:
       - "3000:80"
