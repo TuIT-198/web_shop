@@ -1,6 +1,6 @@
-import { Form } from 'antd'
+import { Form, Radio } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { Lable, WrapperInfo, WrapperLeft, WrapperRight, WrapperTotal } from './style';
+import { Lable, WrapperInfo, WrapperLeft, WrapperRadio, WrapperRight, WrapperTotal } from './style';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { convertPrice } from '../../utils';
@@ -22,6 +22,8 @@ const PaymentPage = () => {
 
   const navigate = useNavigate()
 
+  const [delivery, setDelivery] = useState('fast')
+  const [payment, setPayment] = useState('later_money')
   const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false)
   const [stateUserDetails, setStateUserDetails] = useState({
     name: '',
@@ -51,6 +53,14 @@ const PaymentPage = () => {
     setIsOpenModalUpdateInfo(true)
   }
 
+  const handleDelivery = (e) => {
+    setDelivery(e.target.value)
+  }
+
+  const handlePayment = (e) => {
+    setPayment(e.target.value)
+  }
+
   const priceMemo = useMemo(() => {
     const result = order?.orderItemsSelected?.reduce((total, cur) => {
       return total + ((cur.price * cur.amount))
@@ -73,14 +83,27 @@ const PaymentPage = () => {
     if(priceMemo === 0 || order?.orderItemsSelected?.length === 0) {
       return 0
     }
-    if(priceMemo < 200000){
-      return 20000
-    }else if(priceMemo < 500000) {
-      return 10000
+    if (delivery === 'fast') {
+      if(priceMemo < 200000){
+        return 20000
+      }else if(priceMemo < 500000) {
+        return 10000
+      } else {
+        return 0
+      }
+    } else if (delivery === 'gojek') {
+      return 15000
     } else {
-      return 0
+      // standard
+      if(priceMemo < 200000){
+        return 30000
+      }else if(priceMemo < 500000) {
+        return 20000
+      } else {
+        return 10000
+      }
     }
-  },[priceMemo, order?.orderItemsSelected])
+  },[priceMemo, order?.orderItemsSelected, delivery])
 
   const totalPriceMemo = useMemo(() => {
     return Number(priceMemo) - Number(priceDiscountMemo) + Number(diliveryPriceMemo)
@@ -89,6 +112,8 @@ const PaymentPage = () => {
   const handleAddOrder = () => {
     if(user?.access_token && order?.orderItemsSelected && user?.name
       && user?.address && user?.phone && user?.city && priceMemo && user?.id) {
+        // eslint-disable-next-line no-unused-vars
+        const isPaid = payment === 'paypal' || payment === 'vnpay'
         mutationAddOrder.mutate(
           { 
             token: user?.access_token, 
@@ -97,7 +122,7 @@ const PaymentPage = () => {
             address:user?.address, 
             phone:user?.phone,
             city: user?.city,
-            paymentMethod: 'later_money',
+            paymentMethod: payment,
             itemsPrice: priceMemo,
             shippingPrice: diliveryPriceMemo,
             totalPrice: totalPriceMemo,
@@ -144,8 +169,8 @@ const PaymentPage = () => {
       message.success('Đặt hàng thành công')
       navigate('/orderSuccess', {
         state: {
-          delivery: 'fast',
-          payment: 'later_money',
+          delivery: delivery,
+          payment: payment,
           orders: order?.orderItemsSelected,
           totalPriceMemo: totalPriceMemo
         }
@@ -194,14 +219,65 @@ const PaymentPage = () => {
             <WrapperLeft style={{flex: '1 1 700px'}}>
               <WrapperInfo>
                 <div>
-                  <Lable>Phương thức giao hàng</Lable>
-                  <div style={{padding: '10px 0', fontWeight: 'bold', color: '#ea8500'}}>FAST Giao hàng tiết kiệm</div>
+                  <Lable>Chọn phương thức giao hàng</Lable>
+                  <WrapperRadio onChange={handleDelivery} value={delivery}>
+                    <Radio value="fast" style={{ width: '100%' }}>
+                      <span style={{color: '#ea8500', fontWeight: 'bold'}}>FAST</span> Giao hàng tiết kiệm
+                    </Radio>
+                    <Radio value="gojek" style={{ width: '100%' }}>
+                      <span style={{color: '#ea8500', fontWeight: 'bold'}}>GO_JEK</span> Giao hàng nhanh
+                    </Radio>
+                  </WrapperRadio>
                 </div>
               </WrapperInfo>
               <WrapperInfo>
                 <div>
-                  <Lable>Phương thức thanh toán</Lable>
-                  <div style={{padding: '10px 0', fontWeight: 'bold', color: '#1a94ff'}}>Thanh toán tiền mặt khi nhận hàng (COD)</div>
+                  <Lable>Chọn phương thức thanh toán</Lable>
+                  <WrapperRadio onChange={handlePayment} value={payment}>
+                    <Radio value="later_money" style={{ width: '100%' }}>
+                      Thanh toán tiền mặt khi nhận hàng (COD)
+                    </Radio>
+                    <Radio value="vnpay" style={{ width: '100%' }}>
+                      Thanh toán bằng VNPay
+                    </Radio>
+                    <Radio value="momo" style={{ width: '100%' }}>
+                      Thanh toán bằng ví MoMo
+                    </Radio>
+                  </WrapperRadio>
+                </div>
+              </WrapperInfo>
+
+              {/* Order items preview */}
+              <WrapperInfo>
+                <Lable>Sản phẩm đặt mua</Lable>
+                <div style={{ marginTop: '10px' }}>
+                  {order?.orderItemsSelected?.map((item, idx) => (
+                    <div key={idx} style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '8px 0',
+                      borderBottom: idx < order.orderItemsSelected.length - 1 ? '1px solid #f0f0f0' : 'none'
+                    }}>
+                      <img src={item.image} alt={item.name} style={{
+                        width: '48px', height: '48px', objectFit: 'cover',
+                        borderRadius: '6px', border: '1px solid #eee', flexShrink: 0
+                      }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontSize: '13px', fontWeight: 500, color: '#262626',
+                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                        }}>{item.name}</div>
+                        <div style={{ fontSize: '12px', color: '#888' }}>Số lượng: {item.amount}</div>
+                      </div>
+                      <span style={{ fontWeight: 600, color: '#ff4d4f', fontSize: '13px', flexShrink: 0 }}>
+                        {convertPrice(item.price * item.amount)}
+                      </span>
+                    </div>
+                  ))}
+                  {(!order?.orderItemsSelected || order.orderItemsSelected.length === 0) && (
+                    <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
+                      Không có sản phẩm nào được chọn
+                    </div>
+                  )}
                 </div>
               </WrapperInfo>
             </WrapperLeft>
@@ -210,7 +286,7 @@ const PaymentPage = () => {
                 <WrapperInfo>
                   <div>
                     <span>Địa chỉ nhận hàng: </span>
-                    <span style={{fontWeight: 'bold'}}>{ `${user?.address} - ${user?.city}`} </span>
+                    <span style={{fontWeight: 'bold'}}>{ `${user?.address || 'Chưa cập nhật'} - ${user?.city || ''}`} </span>
                     <span onClick={handleChangeAddress} style={{color: '#9255FD', cursor:'pointer'}}>Thay đổi</span>
                   </div>
                 </WrapperInfo>

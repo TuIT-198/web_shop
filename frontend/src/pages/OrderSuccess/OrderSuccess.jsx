@@ -57,7 +57,7 @@ const OrderSuccess = () => {
                   Phương thức giao hàng
                 </div>
                 <div style={{ fontWeight: 600, color: '#ea8500', fontSize: '13px' }}>
-                  🚚 FAST Giao hàng tiết kiệm
+                  🚚 {state?.delivery === 'fast' ? 'FAST Giao hàng tiết kiệm' : state?.delivery === 'gojek' ? 'GO_JEK Giao hàng nhanh' : 'Giao hàng tiêu chuẩn'}
                 </div>
               </div>
               <div style={{
@@ -68,7 +68,7 @@ const OrderSuccess = () => {
                   Thanh toán
                 </div>
                 <div style={{ fontWeight: 600, color: '#1a94ff', fontSize: '13px' }}>
-                  💵 Tiền mặt khi nhận hàng
+                  {state?.payment === 'later_money' ? '💵 Tiền mặt khi nhận hàng (COD)' : state?.payment === 'vnpay' ? '🏦 Thanh toán VNPay' : state?.payment === 'momo' ? '📱 Thanh toán ví MoMo' : '💵 Tiền mặt khi nhận hàng'}
                 </div>
               </div>
             </div>

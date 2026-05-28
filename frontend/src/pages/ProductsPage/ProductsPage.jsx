@@ -30,9 +30,10 @@ const ProductsPage = () => {
     
     let url = `${import.meta.env.VITE_API_URL}/product/get-all?limit=${limit}&page=${page - 1}`
     if (type) {
-      url += `&filter=type&filter=${type}`
+      url += `&filter=type&filter=${encodeURIComponent(type)}`
     } else if (search) {
-      url += `&filter=name&filter=${search}`
+      // Use 'search' filter to search across both name AND type
+      url += `&filter=search&filter=${encodeURIComponent(search)}`
     }
     
     if (sort) {
@@ -84,27 +85,37 @@ const ProductsPage = () => {
                     cursor: 'pointer', 
                     color: selectedType === '' ? '#9255FD' : '#242424',
                     fontWeight: selectedType === '' ? 'bold' : 'normal',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    transition: 'all 0.2s',
+                    background: selectedType === '' ? '#f3ecff' : 'transparent'
                   }}
                 >
                   Tất cả sản phẩm
                 </span>
                 <Loading isLoading={loadingTypes}>
-                  {types?.map((type) => (
-                    <span 
-                      key={type}
-                      onClick={() => handleTypeClick(type)}
-                      style={{ 
-                        cursor: 'pointer', 
-                        color: selectedType === type ? '#9255FD' : '#242424',
-                        fontWeight: selectedType === type ? 'bold' : 'normal',
-                        textTransform: 'capitalize',
-                        fontSize: '14px'
-                      }}
-                    >
-                      {type}
-                    </span>
-                  ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {types?.map((type) => (
+                      <span 
+                        key={type}
+                        onClick={() => handleTypeClick(type)}
+                        style={{ 
+                          cursor: 'pointer', 
+                          color: selectedType === type ? '#9255FD' : '#242424',
+                          fontWeight: selectedType === type ? 'bold' : 'normal',
+                          fontSize: '14px',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          transition: 'all 0.2s',
+                          background: selectedType === type ? '#f3ecff' : 'transparent',
+                          display: 'block'
+                        }}
+                      >
+                        {type}
+                      </span>
+                    ))}
+                  </div>
                 </Loading>
               </div>
             </div>
@@ -134,6 +145,13 @@ const ProductsPage = () => {
                   />
                 </div>
               </div>
+
+              {/* Results count */}
+              {productsData?.total !== undefined && (
+                <div style={{ marginBottom: '15px', color: '#666', fontSize: '13px' }}>
+                  Hiển thị {productsData?.data?.length || 0} / {productsData.total} sản phẩm
+                </div>
+              )}
 
               {/* Grid */}
               <Loading isLoading={loadingProducts}>

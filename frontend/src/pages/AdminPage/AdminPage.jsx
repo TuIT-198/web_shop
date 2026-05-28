@@ -1,11 +1,13 @@
 import { Menu, Row, Col, Card, Statistic } from 'antd'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { getItem } from '../../utils';
-import { UserOutlined, AppstoreOutlined, ShoppingCartOutlined, DashboardOutlined, DollarOutlined } from '@ant-design/icons'
+import { UserOutlined, AppstoreOutlined, ShoppingCartOutlined, DashboardOutlined, DollarOutlined, SettingOutlined } from '@ant-design/icons'
 import HeaderComponent from '../../components/HeaderCompoent/HeaderComponent';
 import AdminUser from '../../components/AdminUser/AdminUser';
 import AdminProduct from '../../components/AdminProduct/AdminProduct';
 import OrderAdmin from '../../components/OrderAdmin/OrderAmin';
+import ProfilePage from '../Profile/ProfilePage';
 import * as DashboardService from '../../services/DashboardService'
 import { useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
@@ -15,13 +17,22 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 const AdminPage = () => {
   const user = useSelector((state) => state?.user)
+  const location = useLocation()
   const [keySelected, setKeySelected] = useState('dashboard');
+
+  // Allow switching tabs via navigation state (e.g., from header "Thông tin người dùng")
+  useEffect(() => {
+    if (location.state?.selectedKey) {
+      setKeySelected(location.state.selectedKey)
+    }
+  }, [location.state])
 
   const items = [
     getItem('Tổng quan', 'dashboard', <DashboardOutlined />),
     getItem('Người dùng', 'users', <UserOutlined />),
     getItem('Sản phẩm', 'products', <AppstoreOutlined />),
     getItem('Đơn hàng', 'orders', <ShoppingCartOutlined />),
+    getItem('Thông tin cá nhân', 'profile', <SettingOutlined />),
   ];
 
   // Fetch stats
@@ -195,6 +206,10 @@ const AdminPage = () => {
       case 'orders':
         return (
           <OrderAdmin />
+        )
+      case 'profile':
+        return (
+          <ProfilePage />
         )
       default:
         return <></>

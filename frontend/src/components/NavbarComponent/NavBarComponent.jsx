@@ -1,53 +1,45 @@
-import { Checkbox, Col, Rate, Row } from 'antd'
-import React from 'react'
-import { WrapperContent, WrapperLableText, WrapperTextPrice, WrapperTextValue } from './style'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { WrapperContent, WrapperLableText, WrapperTextValue } from './style'
+import * as ProductService from '../../services/ProductService'
+import Loading from '../LoadingComponent/Loading'
 
 const NavBarComponent = () => {
-    const onChange = () => { }
-    const renderContent = (type, options) => {
-        switch (type) {
-            case 'text':
-                return options.map((option) => {
-                    return (
-                        <WrapperTextValue>{option}</WrapperTextValue>
-                    )
-                })
-            case 'checkbox':
-                return (
-                    <Checkbox.Group style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }} onChange={onChange}>
-                        {options.map((option) => {
-                            return (
-                                <Checkbox style={{ marginLeft: 0 }} value={option.value}>{option.label}</Checkbox>
-                            )
-                        })}
-                    </Checkbox.Group>
-                )
-            case 'star':
-                return options.map((option) => {
-                    return (
-                        <div style={{ display: 'flex' }}>
-                            <Rate style={{ fontSize: '12px' }} disabled defaultValue={option} />
-                            <span> {`tu ${option}  sao`}</span>
-                        </div>
-                    )
-                })
-            case 'price':
-                return options.map((option) => {
-                    return (
-                        <WrapperTextPrice>{option}</WrapperTextPrice>
-                    )
-                })
-            default:
-                return {}
+    const navigate = useNavigate()
+    const [typeProducts, setTypeProducts] = useState([])
+    const [loading, setLoading] = useState(false)
+
+    const fetchAllTypeProduct = async () => {
+        setLoading(true)
+        const res = await ProductService.getAllTypeProduct()
+        if (res?.status === 'OK') {
+            setTypeProducts(res?.data)
         }
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        fetchAllTypeProduct()
+    }, [])
+
+    const handleNavigatetype = (type) => {
+        navigate(`/product/${type.normalize('NFD').replace(/[\u0300-\u036f]/g, '')?.replace(/ /g, '_')}`, { state: type })
     }
 
     return (
-        <div>
-            <WrapperLableText>Lable</WrapperLableText>
-            <WrapperContent>
-                {renderContent('text', ['CPU', 'Mainboard', 'RAM'])}
-            </WrapperContent>
+        <div style={{ background: '#fff', padding: '15px', borderRadius: '6px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+            <WrapperLableText style={{ borderBottom: '1px solid #eee', paddingBottom: '8px', marginBottom: '12px' }}>
+                Danh mục sản phẩm
+            </WrapperLableText>
+            <Loading isLoading={loading}>
+                <WrapperContent style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {typeProducts.map((item) => (
+                        <WrapperTextValue key={item} onClick={() => handleNavigatetype(item)}>
+                            {item}
+                        </WrapperTextValue>
+                    ))}
+                </WrapperContent>
+            </Loading>
         </div>
     )
 }

@@ -4,7 +4,7 @@ import { axiosJWT } from "./UserService"
 export const getAllProduct = async (search, limit) => {
     let res = {}
     if (search?.length > 0) {
-        res = await axios.get(`${import.meta.env.VITE_API_URL}/product/get-all?filter=name&filter=${search}&limit=${limit}`)
+        res = await axios.get(`${import.meta.env.VITE_API_URL}/product/get-all?filter=search&filter=${encodeURIComponent(search)}&limit=${limit}`)
     } else {
         res = await axios.get(`${import.meta.env.VITE_API_URL}/product/get-all?limit=${limit}`)
     }
