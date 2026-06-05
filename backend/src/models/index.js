@@ -6,7 +6,6 @@ const Order = require('./OrderModel');
 const OrderItem = require('./OrderItemModel');
 const ShippingAddress = require('./ShippingAddressModel');
 const Payment = require('./PaymentModel');
-const Review = require('./ReviewModel');
 const Coupon = require('./CouponModel');
 const Cart = require('./CartModel');
 const CartItem = require('./CartItemModel');
@@ -39,13 +38,7 @@ ShippingAddress.belongsTo(Order, { foreignKey: 'orderId' });
 Order.hasMany(Payment, { foreignKey: 'orderId', onDelete: 'CASCADE' });
 Payment.belongsTo(Order, { foreignKey: 'orderId' });
 
-// 8. Product & Review
-Product.hasMany(Review, { foreignKey: 'productId', onDelete: 'CASCADE' });
-Review.belongsTo(Product, { foreignKey: 'productId' });
 
-// 9. User & Review
-User.hasMany(Review, { foreignKey: 'userId', onDelete: 'CASCADE' });
-Review.belongsTo(User, { foreignKey: 'userId' });
 
 // 10. User & Cart
 User.hasOne(Cart, { foreignKey: 'userId', onDelete: 'CASCADE' });
@@ -68,7 +61,6 @@ module.exports = {
   OrderItem,
   ShippingAddress,
   Payment,
-  Review,
   Coupon,
   Cart,
   CartItem
