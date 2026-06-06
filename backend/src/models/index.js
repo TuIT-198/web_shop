@@ -6,7 +6,6 @@ const Order = require('./OrderModel');
 const OrderItem = require('./OrderItemModel');
 const ShippingAddress = require('./ShippingAddressModel');
 const Payment = require('./PaymentModel');
-const Coupon = require('./CouponModel');
 const Cart = require('./CartModel');
 const CartItem = require('./CartItemModel');
 
@@ -61,7 +60,6 @@ module.exports = {
   OrderItem,
   ShippingAddress,
   Payment,
-  Coupon,
   Cart,
   CartItem
 };

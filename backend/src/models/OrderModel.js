@@ -40,15 +40,6 @@ const Order = sequelize.define('Order', {
     defaultValue: 0,
     field: 'shipping_fee',
   },
-  couponCode: {
-    type: DataTypes.STRING,
-    field: 'coupon_code',
-  },
-  discountAmount: {
-    type: DataTypes.DECIMAL(10, 2),
-    defaultValue: 0,
-    field: 'discount_amount',
-  },
   note: {
     type: DataTypes.TEXT,
   },

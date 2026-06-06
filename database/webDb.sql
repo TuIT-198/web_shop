@@ -10,6 +10,7 @@ CREATE TYPE payment_method_enum AS ENUM ('cod', 'bank_transfer', 'momo', 'vnpay'
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL,   
     full_name VARCHAR(100) NOT NULL,
     phone VARCHAR(15),
@@ -18,6 +19,8 @@ CREATE TABLE users (
     refresh_token TEXT,               
     address VARCHAR(255),             
     city VARCHAR(100),                
+    otp_code VARCHAR(50),
+    otp_expiry TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -85,8 +88,6 @@ CREATE TABLE orders (
     payment_status payment_status_enum DEFAULT 'unpaid',
     shipping_method VARCHAR(50),
     shipping_fee DECIMAL(10,2) DEFAULT 0,
-    coupon_code VARCHAR(50),            
-    discount_amount DECIMAL(10,2) DEFAULT 0,
     note TEXT,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     paid_at TIMESTAMP NULL,
@@ -141,23 +142,6 @@ CREATE TABLE reviews (
     UNIQUE (product_id, user_id)  
 );
 
--- 8. MÃ GIẢM GIÁ (coupons)
-CREATE TABLE coupons (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    code VARCHAR(50) NOT NULL UNIQUE,
-    description TEXT,
-    discount_type VARCHAR(20) CHECK (discount_type IN ('percent', 'fixed')),
-    discount_value DECIMAL(10,2) NOT NULL,
-    min_order_value DECIMAL(12,2) DEFAULT 0,
-    max_discount DECIMAL(12,2),         
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL,
-    usage_limit INT,                     
-    used_count INT DEFAULT 0,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- INDEXES (tối ưu truy vấn)
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_products_name ON products(name);
@@ -174,8 +158,7 @@ CREATE INDEX idx_categories_parent ON categories(parent_id);
 CREATE INDEX idx_categories_slug ON categories(slug);
 CREATE INDEX idx_carts_user ON carts(user_id);
 CREATE INDEX idx_payments_order_id ON payments(order_id);
-CREATE INDEX idx_coupons_code ON coupons(code);
-CREATE INDEX idx_coupons_date ON coupons(start_date, end_date);
+
 
 -- TRIGGERS cập nhật updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -229,8 +212,3 @@ WHERE (p.name = 'Card màn hình ASUS ROG Strix RTX 4090 24GB' AND c.name = 'VGA
 INSERT INTO users (email, password, full_name, phone, is_admin, address, city) VALUES
 ('customer@example.com', '$2a$10$8jlomD81eIWhOVwTbnInxOuSyM4W4cWX20l6hL/5lfx1rNgfk3Yt2', 'Nguyễn Văn A', '0909123456', false, '12 Mạc Đĩnh Chi', 'Hồ Chí Minh');
 
--- 6. Tạo mã giảm giá mẫu
-INSERT INTO coupons (code, description, discount_type, discount_value, min_order_value, max_discount, start_date, end_date)
-VALUES 
-('WELCOME10', 'Giảm 10% cho đơn hàng đầu tiên', 'percent', 10, 500000, 500000, CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days'),
-('FREESHIP', 'Miễn phí vận chuyển', 'fixed', 30000, 200000, 30000, CURRENT_DATE, CURRENT_DATE + INTERVAL '15 days');
