@@ -105,62 +105,72 @@ const ProductDetailsComponent = ({idProduct}) => {
 
     return (
         <Loading isLoading={isLoading}>
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px', height:'100%' }}>
-                <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
-                    <Image src={productDetails?.image} alt="image prodcut" preview={false} />
-                    <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
-                        <WrapperStyleColImage span={4}>
-                            <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
-                        </WrapperStyleColImage>
-                    </Row>
-                </Col>
-                <Col span={14} style={{ paddingLeft: '10px' }}>
-                    <WrapperStyleNameProduct>{productDetails?.name}</WrapperStyleNameProduct>
-                    <div>
-                        <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating} />
-                        <WrapperStyleTextSell> | Đã bán {productDetails?.selled || 0}+</WrapperStyleTextSell>
-                    </div>
-                    <WrapperPriceProduct>
-                        <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
-                    </WrapperPriceProduct>
-                    <WrapperAddressProduct>
-                        <span>Giao đến </span>
-                        <span className='address'>{user?.address}</span> -
-                        <span className='change-address'>Đổi địa chỉ</span>
-                    </WrapperAddressProduct>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', paddingBottom: '20px' }}>
+                <Row style={{ padding: '16px', background: '#fff', borderRadius: '4px', height:'100%' }}>
+                    <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
+                        <Image src={productDetails?.image} alt="image prodcut" preview={false} />
+                        <Row style={{ paddingTop: '10px', justifyContent: 'space-between' }}>
+                            <WrapperStyleColImage span={4}>
+                                <WrapperStyleImageSmall src={productDetails?.image} alt="image small" preview={false} />
+                            </WrapperStyleColImage>
+                        </Row>
+                    </Col>
+                    <Col span={14} style={{ paddingLeft: '10px' }}>
+                        <WrapperStyleNameProduct>{productDetails?.name}</WrapperStyleNameProduct>
+                        <div>
+                            <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating} />
+                            <WrapperStyleTextSell> | Đã bán {productDetails?.selled || 0}+</WrapperStyleTextSell>
+                        </div>
+                        <WrapperPriceProduct>
+                            <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
+                        </WrapperPriceProduct>
+                        <WrapperAddressProduct>
+                            <span>Giao đến </span>
+                            <span className='address'>{user?.address}</span> -
+                            <span className='change-address'>Đổi địa chỉ</span>
+                        </WrapperAddressProduct>
 
-                    <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
-                        <div style={{ marginBottom: '10px' }}>Số lượng</div>
-                        <WrapperQualityProduct>
-                            <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease',numProduct === 1)}>
-                                <MinusOutlined style={{ color: '#000', fontSize: '20px' }} />
-                            </button>
-                            <WrapperInputNumber onChange={onChange} defaultValue={1} max={productDetails?.countInStock} min={1} value={numProduct} size="small" />
-                            <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase',  numProduct === productDetails?.countInStock)}>
-                                <PlusOutlined style={{ color: '#000', fontSize: '20px' }} />
-                            </button>
-                        </WrapperQualityProduct>
+                        <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
+                            <div style={{ marginBottom: '10px' }}>Số lượng</div>
+                            <WrapperQualityProduct>
+                                <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease',numProduct === 1)}>
+                                    <MinusOutlined style={{ color: '#000', fontSize: '20px' }} />
+                                </button>
+                                <WrapperInputNumber onChange={onChange} defaultValue={1} max={productDetails?.countInStock} min={1} value={numProduct} size="small" />
+                                <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('increase',  numProduct === productDetails?.countInStock)}>
+                                    <PlusOutlined style={{ color: '#000', fontSize: '20px' }} />
+                                </button>
+                            </WrapperQualityProduct>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <ButtonComponent
+                                size={40}
+                                styleButton={{
+                                    background: 'rgb(255, 57, 69)',
+                                    height: '48px',
+                                    width: '220px',
+                                    border: 'none',
+                                    borderRadius: '4px'
+                                }}
+                                onClick={handleAddOrderProduct}
+                                textbutton={'Đặt mua'}
+                                styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
+                            />
+                            {errorLimitOrder && <div style={{color: 'red'}}>Sản phẩm đã hết hàng</div>}
+                        </div>
+                    </Col>
+                </Row >
+                {productDetails?.description && (
+                    <div style={{ padding: '20px', background: '#fff', borderRadius: '4px', border: '1px solid #e5e5e5' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', color: '#333', borderBottom: '2px solid #9255FD', width: 'fit-content', paddingBottom: '5px' }}>
+                            Mô tả sản phẩm
+                        </div>
+                        <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#555', whiteSpace: 'pre-line' }}>
+                            {productDetails?.description}
+                        </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <ButtonComponent
-                            size={40}
-                            styleButton={{
-                                background: 'rgb(255, 57, 69)',
-                                height: '48px',
-                                width: '220px',
-                                border: 'none',
-                                borderRadius: '4px'
-                            }}
-                            onClick={handleAddOrderProduct}
-                            textbutton={'Đặt mua'}
-                            styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-                        />
-                        {errorLimitOrder && <div style={{color: 'red'}}>Sản phẩm đã hết hàng</div>}
-                    </div>
-                </Col>
-
-            </Row >
-            
+                )}
+            </div>
         </Loading>
     )
 }

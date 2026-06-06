@@ -12,6 +12,11 @@ import ProfilePage from "../pages/Profile/ProfilePage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
+import AboutPage from "../pages/AboutPage/AboutPage";
+import WarrantyPolicyPage from "../pages/WarrantyPolicyPage/WarrantyPolicyPage";
+import ReturnPolicyPage from "../pages/ReturnPolicyPage/ReturnPolicyPage";
+import PurchaseGuidePage from "../pages/PurchaseGuidePage/PurchaseGuidePage";
+import FaqPage from "../pages/FaqPage/FaqPage";
 
 export const routes = [
   {
@@ -80,6 +85,31 @@ export const routes = [
     isShowHeader: false,
     isPrivated: true,
     isAdmin: true,
+  },
+  {
+    path: "/gioi-thieu",
+    page: AboutPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/chinh-sach-bao-hanh",
+    page: WarrantyPolicyPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/chinh-sach-doi-tra",
+    page: ReturnPolicyPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/huong-dan-mua-hang",
+    page: PurchaseGuidePage,
+    isShowHeader: true,
+  },
+  {
+    path: "/cau-hoi-thuong-gap",
+    page: FaqPage,
+    isShowHeader: true,
   },
   {
     path: "*",

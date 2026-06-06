@@ -13,6 +13,11 @@ const User = sequelize.define('User', {
     allowNull: false,
     field: 'full_name',
   },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true,
+  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -43,6 +48,14 @@ const User = sequelize.define('User', {
   refreshToken: {
     type: DataTypes.TEXT,
     field: 'refresh_token',
+  },
+  otpCode: {
+    type: DataTypes.STRING,
+    field: 'otp_code',
+  },
+  otpExpiry: {
+    type: DataTypes.DATE,
+    field: 'otp_expiry',
   }
 }, {
   tableName: 'users',

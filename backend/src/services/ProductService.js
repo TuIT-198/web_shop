@@ -1,4 +1,4 @@
-const { Product, Category } = require("../models");
+const { Product, Category, ProductCategory } = require("../models");
 const { Op, Sequelize } = require("sequelize");
 
 const slugify = (text) => {
@@ -285,6 +285,31 @@ const getAllType = async () => {
     }
 };
 
+const deleteType = async (typeName) => {
+    try {
+        const category = await Category.findOne({ where: { name: typeName } });
+        if (!category) {
+            return {
+                status: 'ERR',
+                message: 'Loại sản phẩm không tồn tại'
+            };
+        }
+
+        // Remove associations in ProductCategory
+        await ProductCategory.destroy({ where: { categoryId: category.id } });
+
+        // Delete the category
+        await category.destroy();
+
+        return {
+            status: 'OK',
+            message: 'Xóa loại sản phẩm thành công'
+        };
+    } catch (e) {
+        throw e;
+    }
+};
+
 module.exports = {
     createProduct,
     updateProduct,
@@ -292,5 +317,6 @@ module.exports = {
     deleteProduct,
     getAllProduct,
     deleteManyProduct,
-    getAllType
+    getAllType,
+    deleteType
 };

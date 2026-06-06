@@ -63,3 +63,12 @@ export const getAllTypeProduct = async () => {
     const res = await axios.get(`${import.meta.env.VITE_API_URL}/product/get-all-type`)
     return res.data
 }
+
+export const deleteTypeProduct = async (name, access_token) => {
+    const res = await axiosJWT.delete(`${import.meta.env.VITE_API_URL}/product/delete-type/${encodeURIComponent(name)}`, {
+        headers: {
+            Authorization: `Bearer ${access_token}`,
+        }
+    })
+    return res.data
+}

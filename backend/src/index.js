@@ -43,6 +43,7 @@ async function seedDatabase() {
             const hashedPassword = bcrypt.hashSync('admin123', 10);
             await User.create({
                 name: 'Admin Shop',
+                username: 'admin',
                 email: adminEmail,
                 password: hashedPassword,
                 isAdmin: true,
@@ -50,7 +51,11 @@ async function seedDatabase() {
                 address: 'Hà Nội',
                 city: 'Hà Nội'
             });
-            console.log('Seeded Admin User: admin@gmail.com / admin123');
+            console.log('Seeded Admin User: admin / admin123 (email: admin@gmail.com)');
+        } else if (!adminExists.username) {
+            // Cập nhật username cho admin cũ chưa có username
+            await adminExists.update({ username: 'admin' });
+            console.log('Updated Admin User: added username=admin');
         }
 
         // Seed default products

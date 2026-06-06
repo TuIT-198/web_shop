@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react'
-import NavBarComponent from '../../components/NavbarComponent/NavBarComponent'
 import CardComponent from '../../components/CardComponent/CardComponent'
 import { Col, Pagination, Row } from 'antd'
-import { WrapperNavbar, WrapperProducts } from './style'
+import { WrapperProducts } from './style'
 import { useLocation } from 'react-router-dom'
 import * as ProductService from '../../services/ProductService'
 import { useEffect } from 'react'
@@ -10,10 +9,24 @@ import { useState } from 'react'
 import Loading from '../../components/LoadingComponent/Loading'
 import { useSelector } from 'react-redux'
 import { useDebounce } from '../../hooks/useDebounce'
+import TypeProduct from '../../components/TypeProduct/TypeProduct'
+import { WrapperTypeProduct } from '../HomePage/style'
 
 const TypeProductPage = () => {
     const searchProduct = useSelector((state) => state?.product?.search)
     const searchDebounce = useDebounce(searchProduct, 500)
+
+    const [typeProducts, setTypeProducts] = useState([])
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct()
+        if (res?.status === 'OK') {
+            setTypeProducts(res?.data)
+        }
+    }
+
+    useEffect(() => {
+        fetchAllTypeProduct()
+    }, [])
 
     const { state}  = useLocation()
     const [products, setProducts] = useState([])
@@ -47,13 +60,21 @@ const TypeProductPage = () => {
     }
     return (
         <Loading isLoading={loading}>
-            <div style={{ width: '100%', background: '#efefef', height: 'calc(100vh - 64px)' }}>
-                <div style={{ width: '1270px', margin: '0 auto', height: '100%' }}>
-                    <Row style={{ flexWrap: 'nowrap', paddingTop: '10px',height: 'calc(100% - 20px)' }}>
-                        <WrapperNavbar span={4} >
-                            <NavBarComponent />
-                        </WrapperNavbar>
-                        <Col span={20} style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+            <div style={{ width: '100%', background: '#fff', borderBottom: '1px solid #e5e5e5' }}>
+                <div style={{ width: '1270px', margin: '0 auto', padding: '0 15px' }}>
+                    <WrapperTypeProduct>
+                        {typeProducts.map((item) => {
+                            return (
+                                <TypeProduct name={item} key={item}/>
+                            )
+                        })}
+                    </WrapperTypeProduct>
+                </div>
+            </div>
+            <div style={{ width: '100%', background: '#efefef', minHeight: 'calc(100vh - 108px)', paddingBottom: '30px' }}>
+                <div style={{ width: '1270px', margin: '0 auto' }}>
+                    <Row style={{ paddingTop: '10px' }}>
+                        <Col span={24} style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
                             <WrapperProducts >
                                 {products?.filter((pro) => {
                                     if(searchDebounce === '') {
@@ -79,7 +100,9 @@ const TypeProductPage = () => {
                                     )
                                 })}
                             </WrapperProducts>
-                            <Pagination defaultCurrent={panigate.page + 1} total={panigate?.total} onChange={onChange} style={{ textAlign: 'center', marginTop: '10px' }} />
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                                <Pagination defaultCurrent={panigate.page + 1} total={panigate?.total} onChange={onChange} />
+                            </div>
                         </Col>
                     </Row>
                 </div>

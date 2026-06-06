@@ -1,7 +1,6 @@
 import React from 'react'
 import { StyleNameProduct, WrapperCardStyle, WrapperDiscountText, WrapperPriceText, WrapperReportText, WrapperStyleTextSell } from './style'
 import { StarFilled } from '@ant-design/icons'
-import logo from '../../assets/images/logo.png'
 import { useNavigate } from 'react-router-dom'
 import { convertPrice } from '../../utils'
 import styled from 'styled-components'
@@ -21,17 +20,21 @@ const CardComponent = (props) => {
             cover={<img alt="example" src={image} />}
             onClick={() =>  handleDetailsProduct(id)}
         >
-            <img
-                src={logo}
+            <div
                 style={{
-                    width: '68px',
-                    height: '14px',
+                    background: 'linear-gradient(135deg, #9255FD, #6c3fd5)',
+                    color: '#fff',
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    padding: '2px 8px',
                     position: 'absolute',
-                    top: -1,
-                    left: -1,
-                    borderTopLeftRadius: '3px'
+                    top: 0,
+                    left: 0,
+                    borderTopLeftRadius: '3px',
+                    borderBottomRightRadius: '6px',
+                    letterSpacing: '0.5px'
                 }}
-            />
+            >Tuny</div>
             <StyleNameProduct>{name}</StyleNameProduct>
             <WrapperReportText>
                 <span style={{ marginRight: '4px' }}>
@@ -40,10 +43,10 @@ const CardComponent = (props) => {
                 <WrapperStyleTextSell> | Đã bán {selled || 0}</WrapperStyleTextSell>
             </WrapperReportText>
             <WrapperPriceText>
-                <span style={{ marginRight: '8px' }}>{convertPrice(price)}</span>
+                <span style={{ whiteSpace: 'nowrap' }}>{convertPrice(price)}</span>
                 {discount > 0 && (
-                    <WrapperDiscountText>
-                        - {discount} %
+                    <WrapperDiscountText style={{ whiteSpace: 'nowrap' }}>
+                        -{discount}%
                     </WrapperDiscountText>
                 )}
             </WrapperPriceText>

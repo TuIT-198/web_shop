@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Row, Select, Pagination, Breadcrumb } from 'antd'
+import { Col, Row, Select, Pagination } from 'antd'
 import CardComponent from '../../components/CardComponent/CardComponent'
 import * as ProductService from '../../services/ProductService'
 import { useQuery } from '@tanstack/react-query'
@@ -71,58 +71,11 @@ const ProductsPage = () => {
   return (
     <div style={{ background: '#f5f5fa', width: '100%', minHeight: '100vh', padding: '20px 0' }}>
       <div style={{ width: '100%', maxWidth: '1270px', margin: '0 auto', padding: '0 15px' }}>
-        <Breadcrumb style={{ marginBottom: '15px' }} items={[{ title: <a href="/">Trang chủ</a> }, { title: 'Tất cả sản phẩm' }]} />
+
         
         <Row gutter={[20, 20]}>
-          {/* Sidebar */}
-          <Col xs={24} sm={24} md={6} lg={5}>
-            <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-              <h4 style={{ fontWeight: 'bold', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '15px' }}>Danh mục sản phẩm</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span 
-                  onClick={() => handleTypeClick('')}
-                  style={{ 
-                    cursor: 'pointer', 
-                    color: selectedType === '' ? '#9255FD' : '#242424',
-                    fontWeight: selectedType === '' ? 'bold' : 'normal',
-                    fontSize: '14px',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    transition: 'all 0.2s',
-                    background: selectedType === '' ? '#f3ecff' : 'transparent'
-                  }}
-                >
-                  Tất cả sản phẩm
-                </span>
-                <Loading isLoading={loadingTypes}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {types?.map((type) => (
-                      <span 
-                        key={type}
-                        onClick={() => handleTypeClick(type)}
-                        style={{ 
-                          cursor: 'pointer', 
-                          color: selectedType === type ? '#9255FD' : '#242424',
-                          fontWeight: selectedType === type ? 'bold' : 'normal',
-                          fontSize: '14px',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          transition: 'all 0.2s',
-                          background: selectedType === type ? '#f3ecff' : 'transparent',
-                          display: 'block'
-                        }}
-                      >
-                        {type}
-                      </span>
-                    ))}
-                  </div>
-                </Loading>
-              </div>
-            </div>
-          </Col>
-
           {/* Product Listing */}
-          <Col xs={24} sm={24} md={18} lg={19}>
+          <Col span={24}>
             <div style={{ background: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', minHeight: '500px' }}>
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
@@ -181,7 +134,7 @@ const ProductsPage = () => {
 
               {/* Pagination */}
               {productsData?.total > limit && (
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
                   <Pagination 
                     current={currentPage} 
                     total={productsData.total} 

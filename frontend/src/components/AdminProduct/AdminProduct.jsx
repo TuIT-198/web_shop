@@ -1,4 +1,4 @@
-import { Button, Form, Select, Space } from 'antd'
+import { Button, Form, Select, Space, Modal } from 'antd'
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
@@ -22,8 +22,37 @@ const AdminProduct = () => {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false)
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
+  const [isModalOpenType, setIsModalOpenType] = useState(false)
+  const [isLoadingDeleteType, setIsLoadingDeleteType] = useState(false)
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
+
+  const handleDeleteType = (type) => {
+    Modal.confirm({
+      title: 'Xác nhận xóa loại sản phẩm',
+      content: `Bạn có chắc chắn muốn xóa loại sản phẩm "${type}"? Tất cả sản phẩm thuộc loại này sẽ không còn phân loại.`,
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        setIsLoadingDeleteType(true)
+        try {
+          const res = await ProductService.deleteTypeProduct(type, user?.access_token)
+          if (res?.status === 'OK') {
+            message.success('Xóa loại sản phẩm thành công')
+            typeProduct.refetch()
+            queryProduct.refetch()
+          } else {
+            message.error(res?.message || 'Có lỗi xảy ra')
+          }
+        } catch (err) {
+          message.error('Không thể kết nối tới server')
+        } finally {
+          setIsLoadingDeleteType(false)
+        }
+      }
+    })
+  }
   const inittial = () => ({
     name: '',
     price: '',
@@ -406,6 +435,7 @@ const AdminProduct = () => {
       ...stateProduct,
       image: file.preview
     })
+    form.setFieldsValue({ image: file.preview })
   }
 
   const handleOnchangeAvatarDetails = async ({ fileList }) => {
@@ -417,6 +447,7 @@ const AdminProduct = () => {
       ...stateProductDetails,
       image: file.preview
     })
+    form.setFieldsValue({ image: file.preview })
   }
   const onUpdateProduct = () => {
     mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
@@ -436,8 +467,15 @@ const AdminProduct = () => {
   return (
     <div>
       <WrapperHeader>Quản lý sản phẩm</WrapperHeader>
-      <div style={{ marginTop: '10px' }}>
-        <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '60px' }} /></Button>
+      <div style={{ marginTop: '10px', display: 'flex', gap: '20px' }}>
+        <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsModalOpen(true)}>
+          <PlusOutlined style={{ fontSize: '40px' }} />
+          <div style={{ marginTop: '10px', fontWeight: 600 }}>Tạo sản phẩm</div>
+        </Button>
+        <Button style={{ height: '150px', width: '150px', borderRadius: '6px', borderStyle: 'dashed', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsModalOpenType(true)}>
+          <DeleteOutlined style={{ fontSize: '40px', color: 'red' }} />
+          <div style={{ marginTop: '10px', fontWeight: 600, color: 'red' }}>Xóa loại sản phẩm</div>
+        </Button>
       </div>
       <div style={{ marginTop: '20px' }}>
         <TableComponent handleDelteMany={handleDelteManyProducts} columns={columns} isLoading={isLoadingProducts} data={dataTable} onRow={(record, rowIndex) => {
@@ -453,8 +491,8 @@ const AdminProduct = () => {
 
           <Form
             name="basic"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             onFinish={onFinish}
             autoComplete="on"
             form={form}
@@ -524,17 +562,22 @@ const AdminProduct = () => {
               <InputComponent value={stateProduct.discount} onChange={handleOnchange} name="discount" />
             </Form.Item>
             <Form.Item
-              label="Hình ảnh"
+              label="Link ảnh (URL)"
               name="image"
-              rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
+              rules={[{ required: true, message: 'Vui lòng nhập link ảnh hoặc chọn file tải lên!' }]}
+            >
+              <InputComponent value={stateProduct.image} onChange={handleOnchange} name="image" placeholder="Dán link ảnh từ Google/Internet tại đây" />
+            </Form.Item>
+            <Form.Item
+              label="Tải ảnh từ máy"
             >
               <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
-                <Button >Chọn ảnh</Button>
+                <Button >Chọn file</Button>
                 {stateProduct?.image && (
                   <img src={stateProduct?.image} style={{
-                    height: '60px', width: '60px',
-                    borderRadius: '50%', objectFit: 'cover', marginLeft: '10px'
-                  }} alt="avatar" />
+                    height: '50px', width: '50px',
+                    borderRadius: '4px', objectFit: 'cover', marginLeft: '10px'
+                  }} alt="preview" />
                 )}
               </WrapperUploadFile>
             </Form.Item>
@@ -551,8 +594,8 @@ const AdminProduct = () => {
 
           <Form
             name="basic"
-            labelCol={{ span: 2 }}
-            wrapperCol={{ span: 22 }}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
             onFinish={onUpdateProduct}
             autoComplete="on"
             form={form}
@@ -608,17 +651,22 @@ const AdminProduct = () => {
               <InputComponent value={stateProductDetails.discount} onChange={handleOnchangeDetails} name="discount" />
             </Form.Item>
             <Form.Item
-              label="Hình ảnh"
+              label="Link ảnh (URL)"
               name="image"
-              rules={[{ required: true, message: 'Vui lòng chọn ảnh!' }]}
+              rules={[{ required: true, message: 'Vui lòng nhập link ảnh hoặc chọn file tải lên!' }]}
+            >
+              <InputComponent value={stateProductDetails.image} onChange={handleOnchangeDetails} name="image" placeholder="Dán link ảnh từ Google/Internet tại đây" />
+            </Form.Item>
+            <Form.Item
+              label="Tải ảnh từ máy"
             >
               <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
-                <Button >Chọn ảnh</Button>
+                <Button >Chọn file</Button>
                 {stateProductDetails?.image && (
                   <img src={stateProductDetails?.image} style={{
-                    height: '60px', width: '60px',
-                    borderRadius: '50%', objectFit: 'cover', marginLeft: '10px'
-                  }} alt="avatar" />
+                    height: '50px', width: '50px',
+                    borderRadius: '4px', objectFit: 'cover', marginLeft: '10px'
+                  }} alt="preview" />
                 )}
               </WrapperUploadFile>
             </Form.Item>
@@ -633,6 +681,28 @@ const AdminProduct = () => {
       <ModalComponent title="Xóa sản phẩm" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteProduct}>
         <Loading isLoading={isLoadingDeleted}>
           <div>Bạn có chắc xóa sản phẩm này không?</div>
+        </Loading>
+      </ModalComponent>
+      <ModalComponent title="Quản lý & Xóa loại sản phẩm" open={isModalOpenType} onCancel={() => setIsModalOpenType(false)} footer={null}>
+        <Loading isLoading={isLoadingDeleteType}>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {typeProduct?.data?.data?.map((type) => (
+              <div key={type} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
+                <span style={{ fontSize: '15px', fontWeight: 500 }}>{type}</span>
+                <Button 
+                  type="text" 
+                  danger 
+                  icon={<DeleteOutlined />} 
+                  onClick={() => handleDeleteType(type)}
+                >
+                  Xóa
+                </Button>
+              </div>
+            ))}
+            {(!typeProduct?.data?.data || typeProduct.data.data.length === 0) && (
+              <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>Không có loại sản phẩm nào</div>
+            )}
+          </div>
         </Loading>
       </ModalComponent>
     </div>

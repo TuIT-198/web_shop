@@ -62,6 +62,7 @@ export const WrapperPriceText = styled.div`
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 `
 
 export const WrapperDiscountText = styled.span`

@@ -215,37 +215,39 @@ const PaymentPage = () => {
       <Loading isLoading={isLoadingAddOrder}>
         <div style={{height: '100%', width: '100%', maxWidth: '1270px', margin: '0 auto', padding: '0 15px'}}>
           <h3 style={{fontWeight: 'bold', paddingTop: '15px'}}>Thanh toán</h3>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap'}}>
-            <WrapperLeft style={{flex: '1 1 700px'}}>
-              <WrapperInfo>
-                <div>
-                  <Lable>Chọn phương thức giao hàng</Lable>
-                  <WrapperRadio onChange={handleDelivery} value={delivery}>
-                    <Radio value="fast" style={{ width: '100%' }}>
-                      <span style={{color: '#ea8500', fontWeight: 'bold'}}>FAST</span> Giao hàng tiết kiệm
-                    </Radio>
-                    <Radio value="gojek" style={{ width: '100%' }}>
-                      <span style={{color: '#ea8500', fontWeight: 'bold'}}>GO_JEK</span> Giao hàng nhanh
-                    </Radio>
-                  </WrapperRadio>
-                </div>
-              </WrapperInfo>
-              <WrapperInfo>
-                <div>
-                  <Lable>Chọn phương thức thanh toán</Lable>
-                  <WrapperRadio onChange={handlePayment} value={payment}>
-                    <Radio value="later_money" style={{ width: '100%' }}>
-                      Thanh toán tiền mặt khi nhận hàng (COD)
-                    </Radio>
-                    <Radio value="vnpay" style={{ width: '100%' }}>
-                      Thanh toán bằng VNPay
-                    </Radio>
-                    <Radio value="momo" style={{ width: '100%' }}>
-                      Thanh toán bằng ví MoMo
-                    </Radio>
-                  </WrapperRadio>
-                </div>
-              </WrapperInfo>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px'}}>
+            <WrapperLeft style={{width: '100%'}}>
+              <div style={{ display: 'flex', gap: '20px', marginBottom: '12px' }}>
+                <WrapperInfo style={{ flex: 1, borderRadius: '6px', border: '1px solid #e5e5e5' }}>
+                  <div>
+                    <Lable>Chọn phương thức giao hàng</Lable>
+                    <WrapperRadio onChange={handleDelivery} value={delivery} style={{ width: '100%', maxWidth: '100%' }}>
+                      <Radio value="fast" style={{ width: '100%' }}>
+                        <span style={{color: '#ea8500', fontWeight: 'bold'}}>FAST</span> Giao hàng tiết kiệm
+                      </Radio>
+                      <Radio value="gojek" style={{ width: '100%' }}>
+                        <span style={{color: '#ea8500', fontWeight: 'bold'}}>GO_JEK</span> Giao hàng nhanh
+                      </Radio>
+                    </WrapperRadio>
+                  </div>
+                </WrapperInfo>
+                <WrapperInfo style={{ flex: 1, borderRadius: '6px', border: '1px solid #e5e5e5' }}>
+                  <div>
+                    <Lable>Chọn phương thức thanh toán</Lable>
+                    <WrapperRadio onChange={handlePayment} value={payment} style={{ width: '100%', maxWidth: '100%' }}>
+                      <Radio value="later_money" style={{ width: '100%' }}>
+                        Thanh toán tiền mặt khi nhận hàng (COD)
+                      </Radio>
+                      <Radio value="vnpay" style={{ width: '100%' }}>
+                        Thanh toán bằng VNPay
+                      </Radio>
+                      <Radio value="momo" style={{ width: '100%' }}>
+                        Thanh toán bằng ví MoMo
+                      </Radio>
+                    </WrapperRadio>
+                  </div>
+                </WrapperInfo>
+              </div>
 
               {/* Order items preview */}
               <WrapperInfo>
@@ -281,52 +283,72 @@ const PaymentPage = () => {
                 </div>
               </WrapperInfo>
             </WrapperLeft>
-            <WrapperRight style={{flex: '1 1 320px'}}>
-              <div style={{width: '100%'}}>
-                <WrapperInfo>
-                  <div>
-                    <span>Địa chỉ nhận hàng: </span>
-                    <span style={{fontWeight: 'bold'}}>{ `${user?.address || 'Chưa cập nhật'} - ${user?.city || ''}`} </span>
-                    <span onClick={handleChangeAddress} style={{color: '#9255FD', cursor:'pointer'}}>Thay đổi</span>
-                  </div>
-                </WrapperInfo>
-                <WrapperInfo>
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <span>Tạm tính</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceMemo)}</span>
-                  </div>
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <span>Giảm giá</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(priceDiscountMemo)}</span>
-                  </div>
-                  <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <span>Phí giao hàng</span>
-                    <span style={{color: '#000', fontSize: '14px', fontWeight: 'bold'}}>{convertPrice(diliveryPriceMemo)}</span>
-                  </div>
-                </WrapperInfo>
-                <WrapperTotal>
-                  <span>Tổng tiền</span>
-                  <span style={{display:'flex', flexDirection: 'column'}}>
-                    <span style={{color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold'}}>{convertPrice(totalPriceMemo)}</span>
-                    <span style={{color: '#000', fontSize: '11px'}}>(Đã bao gồm VAT nếu có)</span>
-                  </span>
-                </WrapperTotal>
+
+            {/* Checkout Horizontal Info Bar */}
+            <div style={{ 
+              background: '#fff', 
+              padding: '20px', 
+              borderRadius: '6px', 
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)', 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              gap: '30px',
+              marginTop: '15px'
+            }}>
+              {/* Column 1: Delivery Address */}
+              <div style={{ flex: 1.2, borderRight: '1px solid #f0f0f0', paddingRight: '20px' }}>
+                <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px', fontWeight: '600', letterSpacing: '0.5px' }}>ĐỊA CHỈ NHẬN HÀNG</div>
+                <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', lineHeight: '1.5' }}>
+                  📍 {user?.address ? `${user.address}, ${user.city || ''}` : 'Chưa có thông tin địa chỉ nhận hàng'}
+                </div>
+                <div 
+                  onClick={handleChangeAddress} 
+                  style={{ color: '#9255FD', cursor: 'pointer', fontSize: '13px', marginTop: '8px', display: 'inline-block', fontWeight: '600' }}
+                >
+                  Thay đổi địa chỉ
+                </div>
               </div>
-              <ButtonComponent
-                onClick={() => handleAddOrder()}
-                size={40}
-                styleButton={{
-                    background: 'rgb(255, 57, 69)',
-                    height: '48px',
-                    width: '100%',
-                    border: 'none',
-                    borderRadius: '4px',
-                    marginTop: '10px'
-                }}
-                textbutton={'Đặt hàng'}
-                styleTextButton={{ color: '#fff', fontSize: '15px', fontWeight: '700' }}
-              ></ButtonComponent>
-            </WrapperRight>
+
+              {/* Column 2: Breakdown prices */}
+              <div style={{ flex: 1, borderRight: '1px solid #f0f0f0', paddingRight: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span style={{ color: '#666' }}>Tạm tính:</span>
+                  <span style={{ fontWeight: '600', color: '#333' }}>{convertPrice(priceMemo)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span style={{ color: '#666' }}>Giảm giá:</span>
+                  <span style={{ fontWeight: '600', color: '#27ae60' }}>-{convertPrice(priceDiscountMemo)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span style={{ color: '#666' }}>Phí giao hàng:</span>
+                  <span style={{ fontWeight: '600', color: '#333' }}>{convertPrice(diliveryPriceMemo)}</span>
+                </div>
+              </div>
+
+              {/* Column 3: Total Price & Order Button */}
+              <div style={{ flex: 1.3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '13px', color: '#666', marginBottom: '2px' }}>Tổng tiền thanh toán:</span>
+                  <span style={{ color: 'rgb(254, 56, 52)', fontSize: '24px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{convertPrice(totalPriceMemo)}</span>
+                  <span style={{ color: '#888', fontSize: '11px' }}>(Đã bao gồm VAT nếu có)</span>
+                </div>
+                <ButtonComponent
+                  onClick={() => handleAddOrder()}
+                  size={40}
+                  styleButton={{
+                      background: 'rgb(255, 57, 69)',
+                      height: '48px',
+                      padding: '0 35px',
+                      border: 'none',
+                      borderRadius: '4px',
+                      boxShadow: '0 2px 4px rgba(255, 57, 69, 0.2)'
+                  }}
+                  textbutton={'Đặt hàng'}
+                  styleTextButton={{ color: '#fff', fontSize: '16px', fontWeight: '700' }}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <ModalComponent title="Cập nhật thông tin giao hàng" open={isOpenModalUpdateInfo} onCancel={handleCancleUpdate} onOk={handleUpdateInforUser}>

@@ -113,6 +113,23 @@ const getAllType = async (req, res) => {
         })
     }
 }
+const deleteType = async (req, res) => {
+    try {
+        const typeName = req.params.name
+        if (!typeName) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Tên loại sản phẩm là bắt buộc'
+            })
+        }
+        const response = await ProductService.deleteType(typeName)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(500).json({
+            message: e.message || e
+        })
+    }
+}
 
 module.exports = {
     createProduct,
@@ -121,5 +138,6 @@ module.exports = {
     deleteProduct,
     getAllProduct,
     deleteMany,
-    getAllType
+    getAllType,
+    deleteType
 }

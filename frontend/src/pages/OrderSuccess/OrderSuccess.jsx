@@ -39,7 +39,7 @@ const OrderSuccess = () => {
               Đặt hàng thành công! 🎉
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.85)', margin: 0, fontSize: '14px' }}>
-              Cảm ơn bạn đã mua hàng tại MyShop
+              Cảm ơn bạn đã mua hàng tại Tuny
             </p>
           </div>
 
