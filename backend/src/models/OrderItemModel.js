@@ -33,7 +33,10 @@ const OrderItem = sequelize.define('OrderItem', {
   totalPrice: {
     type: DataTypes.DECIMAL(12, 2),
     field: 'total_price',
-    readOnly: true, // Generated ALWAYS AS...
+    set() {
+      // Cột này được tự động tính toán bởi PostgreSQL (GENERATED ALWAYS AS)
+      // Không cho phép gán giá trị từ Sequelize để tránh lỗi ghi vào DB
+    }
   }
 }, {
   tableName: 'order_items',
