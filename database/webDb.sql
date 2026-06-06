@@ -19,8 +19,8 @@ CREATE TABLE users (
     refresh_token TEXT,               
     address VARCHAR(255),             
     city VARCHAR(100),                
-    otp_code VARCHAR(50),
-    otp_expiry TIMESTAMP,
+    otp_code VARCHAR(255),
+    otp_expiry TIMESTAMPTZ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -131,16 +131,6 @@ CREATE TABLE payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. ĐÁNH GIÁ SẢN PHẨM (reviews)
-CREATE TABLE reviews (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (product_id, user_id)  
-);
 
 -- INDEXES (tối ưu truy vấn)
 CREATE INDEX idx_users_email ON users(email);
@@ -153,7 +143,6 @@ CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_order_date ON orders(order_date);
 CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX idx_order_items_product_id ON order_items(product_id);
-CREATE INDEX idx_reviews_product_id ON reviews(product_id);
 CREATE INDEX idx_categories_parent ON categories(parent_id);
 CREATE INDEX idx_categories_slug ON categories(slug);
 CREATE INDEX idx_carts_user ON carts(user_id);

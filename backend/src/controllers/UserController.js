@@ -57,6 +57,7 @@ const forgotPassword = async (req, res) => {
         const response = await UserService.forgotPassword({ email })
         return res.status(200).json(response)
     } catch (e) {
+        console.error('Forgot password error:', e)
         return res.status(500).json({ message: e.message || e })
     }
 }
@@ -70,6 +71,7 @@ const verifyOtp = async (req, res) => {
         const response = await UserService.verifyOtp({ email, otp })
         return res.status(200).json(response)
     } catch (e) {
+        console.error('Verify OTP error:', e)
         return res.status(500).json({ message: e.message || e })
     }
 }
@@ -83,6 +85,7 @@ const resetPassword = async (req, res) => {
         const response = await UserService.resetPassword({ email, resetToken, newPassword })
         return res.status(200).json(response)
     } catch (e) {
+        console.error('Reset password error:', e)
         return res.status(500).json({ message: e.message || e })
     }
 }
